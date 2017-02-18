@@ -3,6 +3,9 @@ declare (strict_types = 1);
 
 namespace Async\Promise;
 
+use function Async\promise_for;
+use function Async\rejection_for;
+
 final class Promise implements Awaitable
 {
     private const STATE_PENDING = 0;
@@ -77,7 +80,7 @@ final class Promise implements Awaitable
     }
 
 
-    private function settle(int $state, $value) : void
+    private function settle(int $state, $value): void
     {
         if (!$this->isPending()) {
             throw new \LogicException('Cannot change resolved/rejected promise status');
@@ -105,19 +108,27 @@ final class Promise implements Awaitable
                     }
                 },
                 static function ($reason) use ($handlers) {
-                    foreach ($handlers as list(0 => $promise, 2 => $onRejected) ) {
+                    foreach ($handlers as list(0 => $promise, 2 => $onRejected)) {
                         static::rejectHandler($promise, $onRejected, $reason);
                     }
                 }
             );
         } elseif ($this->isFulfilled()) {
-            foreach ($handlers as list(0 => $promise, 1 => $onFulfilled)) {
-                static::fulfillHandler($promise, $onFulfilled, $value);
-            }
+            \Async\queue(
+                static function () use ($value, $handlers) {
+                    foreach ($handlers as list(0 => $promise, 1 => $onFulfilled)) {
+                        static::fulfillHandler($promise, $onFulfilled, $value);
+                    }
+                }
+            );
         } elseif ($this->isRejected()) {
-            foreach ($handlers as list(0 => $promise, 2 => $onRejected) ) {
-                static::rejectHandler($promise, $onRejected, $value);
-            }
+            \Async\queue(
+                static function () use ($value, $handlers) {
+                    foreach ($handlers as list(0 => $promise, 2 => $onRejected)) {
+                        static::rejectHandler($promise, $onRejected, $value);
+                    }
+                }
+            );
         }
     }
 

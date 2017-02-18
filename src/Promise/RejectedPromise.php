@@ -30,15 +30,15 @@ final class RejectedPromise implements Awaitable
         $reason = $this->reason;
         $promise = new Promise();
 
-        $callback = static function() use ($promise, $reason, $onRejected) {
-            try {
-                $promise->resolve($onRejected($reason));
-            } catch (\Throwable $exception) {
-                $promise->reject($exception);
+        \Async\queue(
+            static function () use ($promise, $reason, $onRejected) {
+                try {
+                    $promise->resolve($onRejected($reason));
+                } catch (\Throwable $exception) {
+                    $promise->reject($exception);
+                }
             }
-        };
-
-        $callback();
+        );
 
         return $promise;
     }

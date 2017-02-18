@@ -101,6 +101,8 @@ class PromiseTest extends TestCase
 
         $promise1->resolve('value');
 
+        \Async\loop()->run();
+
         $this->assertEquals('value', $carry);
     }
 
@@ -116,6 +118,8 @@ class PromiseTest extends TestCase
         $promise1->then(function ($value) use (&$carry) {
             $carry = $value;
         });
+
+        \Async\loop()->run();
 
         $this->assertSame('value', $carry);
     }
@@ -147,6 +151,8 @@ class PromiseTest extends TestCase
 
         $promise1->reject('reason');
 
+        \Async\loop()->run();
+
         $this->assertEquals('reason', $carry);
     }
 
@@ -163,6 +169,8 @@ class PromiseTest extends TestCase
             null,
             function ($value) use (&$carry) { $carry = $value; }
         );
+
+        \Async\loop()->run();
 
         $this->assertEquals('reason', $carry);
     }
@@ -194,6 +202,8 @@ class PromiseTest extends TestCase
 
         $promise->resolve('value');
 
+        \Async\loop()->run();
+
         $this->assertEquals('value', $carry1);
         $this->assertEquals('value with appendix', $carry2);
     }
@@ -211,6 +221,8 @@ class PromiseTest extends TestCase
             ->then(function ($value) use (&$carry2) { $carry2 = $value; });
 
         $promise->reject('reason');
+
+        \Async\loop()->run();
 
         $this->assertEquals('reason', $carry1);
         $this->assertEquals('reason with appendix', $carry2);
@@ -236,6 +248,8 @@ class PromiseTest extends TestCase
 
         $promise->reject('reason');
 
+        \Async\loop()->run();
+
         $this->assertEquals('reason', $carry1);
         $this->assertSame($exception, $carry2);
     }
@@ -260,6 +274,8 @@ class PromiseTest extends TestCase
 
         $promise->reject('reason 2');
 
+        \Async\loop()->run();
+
         $this->assertEquals('reason 2', $carry1);
         $this->assertEquals('reason 1', $carry2);
     }
@@ -281,6 +297,8 @@ class PromiseTest extends TestCase
             });
 
         $promise2->resolve('resolve 2');
+
+        \Async\loop()->run();
 
         $this->assertEquals('resolve 2', $carry);
     }

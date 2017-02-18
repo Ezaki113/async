@@ -66,6 +66,8 @@ class RejectedPromiseTest extends TestCase
             $this->assertInstanceOf(\DomainException::class, $reason);
         });
 
+        \Async\loop()->run();
+
         $this->assertTrue($promise2->isFulfilled());
     }
 

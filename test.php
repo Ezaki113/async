@@ -3,7 +3,7 @@ declare (strict_types = 1);
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-$loop = new \Async\Loop\UvLoop();
+$loop = \Async\loop();
 
 $loop->queue(static function () {
     echo 'Hello Queue!', PHP_EOL;

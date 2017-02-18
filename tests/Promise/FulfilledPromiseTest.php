@@ -66,6 +66,8 @@ class FulfilledPromiseTest extends TestCase
             $this->assertEquals($expectedValue, $value);
         });
 
+        \Async\loop()->run();
+
         $this->assertTrue($promise2->isFulfilled());
     }
 
@@ -79,6 +81,8 @@ class FulfilledPromiseTest extends TestCase
         $promise2 = $promise1->then(function () {
             throw new LogicException;
         });
+
+        \Async\loop()->run();
 
         $this->assertTrue($promise2->isRejected());
     }

@@ -36,7 +36,7 @@ final class FulfilledPromise implements Awaitable
             }
         };
 
-        $callback();
+        \Async\queue($callback);
 
         return $promise;
     }
