@@ -3,6 +3,10 @@ declare (strict_types = 1);
 
 namespace Async\Loop;
 
+use Async\Stream\Pipe\WritablePipe;
+use Async\Stream\StdoutStream;
+use Async\Stream\WritableStream;
+
 final class UvLoop implements Loop
 {
     /**
@@ -109,5 +113,16 @@ final class UvLoop implements Loop
         );
 
         uv_async_send($handler);
+    }
+
+    public function stdout(): WritableStream
+    {
+        static $stdout;
+
+        if ($stdout === null) {
+            $stdout = new WritablePipe($this->loop, STDOUT);
+        }
+
+        return $stdout;
     }
 }

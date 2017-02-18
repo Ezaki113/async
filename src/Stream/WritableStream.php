@@ -11,16 +11,14 @@ interface WritableStream extends Stream
 
     /**
      * @param string $data
-     * @param float $timeout
+     * @return Awaitable <int> number of bytes written
      *
-     * @return Awaitable<int> number of bytes written
      */
-    public function write(string $data, float $timeout = 0.0) : Awaitable;
+    public function write(string $data) : Awaitable;
 
     /**
      * @param string $data
-     * @param float $timeout
-     * @return Awaitable<int> number of bytes written
+     * @return Awaitable <int> number of bytes written
      */
-    public function end(string $data = '', float $timeout = 0.0) : Awaitable;
+    public function end(string $data = '') : Awaitable;
 }

@@ -3,6 +3,7 @@ declare (strict_types = 1);
 
 namespace Async\Loop;
 
+use Async\Stream\WritableStream;
 use Closure;
 
 interface Loop
@@ -23,4 +24,6 @@ interface Loop
     public function signal(int $signo, callable $callback) : Signal;
 
     public function queue(callable $callback);
+
+    public function stdout() : WritableStream;
 }

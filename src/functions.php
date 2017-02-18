@@ -13,7 +13,6 @@ namespace {
     }
 }
 
-
 namespace Async {
 
     use Async\Loop\{
