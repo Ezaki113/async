@@ -1,0 +1,23 @@
+{
+    "name": "ezaki113/async",
+    "authors": [
+        {
+            "name": "Andrey Kostylev",
+            "email": "kostylevandrey113@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.1",
+        "ext-pcntl": "*",
+        "ext-uv": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Async\\": "src/"
+        },
+        "files": ["src/functions.php"]
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.0"
+    }
+}
