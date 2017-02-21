@@ -125,4 +125,12 @@ final class UvLoop implements Loop
 
         return $stdout;
     }
+
+    /**
+     * @return resource
+     */
+    public function nativeHandler()
+    {
+        return $this->loop;
+    }
 }

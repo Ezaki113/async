@@ -26,4 +26,9 @@ interface Loop
     public function queue(callable $callback);
 
     public function stdout() : WritableStream;
+
+    /**
+     * @return resource
+     */
+    public function nativeHandler();
 }

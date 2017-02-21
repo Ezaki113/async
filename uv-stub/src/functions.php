@@ -103,16 +103,17 @@ function uv_async_send($async) : void {};
 
 /**
  * @param resource $handler
+ * @param callable $callback
  * @return void
  */
-function uv_close($handler) : void {};
+function uv_close($handler, ?callable $callback = null) : void {};
 
 /**
  * @param resource $stream
  * @param string $data
- * @param callable<resource, int> $callback with stream and status
+ * @param ?callable<resource, int> $callback with stream and status
  */
-function uv_write($stream, string $data, callable $callback) {};
+function uv_write($stream, string $data, ?callable $callback = null) {};
 
 /**
  * @param resource $loop
@@ -122,8 +123,19 @@ function uv_write($stream, string $data, callable $callback) {};
 function uv_pipe_init($loop, bool $ipc) {};
 
 /**
- * @param resource $handle
+ * @param resource $handler
  * @param int $fd
  * @return void
  */
-function uv_pipe_open($handle, $fd) : void {};
+function uv_pipe_open($handler, $fd) : void {};
+
+/**
+ * @param resource $handler
+ * @param callable $callback
+ */
+function uv_read_start($handler, callable $callback) : void {};
+
+/**
+ * @param resource $handler
+ */
+function uv_read_stop($handler) : void {};

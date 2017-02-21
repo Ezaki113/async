@@ -1,28 +1,15 @@
 <?php
-declare (strict_types = 1);
-
 require_once __DIR__ . '/vendor/autoload.php';
 
-$loop = \Async\loop();
+$loop = uv_loop_new();
+$handler = uv_pipe_init($loop, false);
+uv_pipe_open($handler, (int)STDIN);
 
-$loop->queue(static function () use ($loop) {
-    $loop->stdout()->write('Hello Queue!' . PHP_EOL);
+
+uv_read_start($handler, function ($socket, $nread, $buffer) {
+    var_dump($nread, $buffer);
 });
 
-$loop->stdout()->write('Hello World!' . PHP_EOL);
-$loop->stdout()->write('Hello World!' . PHP_EOL)
-    ->then(static function () use ($loop) {
-        $loop->stdout()->write('How are you?' . PHP_EOL);
-    });$loop->stdout()->write('Hello World!' . PHP_EOL);
-$loop->stdout()->write('Hello World!' . PHP_EOL);
-$loop->stdout()->write('Hello World!' . PHP_EOL);
-$loop->stdout()->write('Hello World!' . PHP_EOL);
-$loop->stdout()->write('Hello World!' . PHP_EOL)
-    ->then(static function () use ($loop) {
-        $loop->stdout()->write('How are you?' . PHP_EOL);
-    });
 
-$loop->run();
-
-
-
+uv_run($loop, \UV::RUN_DEFAULT);
+uv_close($handler);

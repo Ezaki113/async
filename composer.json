@@ -9,7 +9,8 @@
     "require": {
         "php": ">=7.1",
         "ext-pcntl": "*",
-        "ext-uv": "*"
+        "ext-uv": "*",
+        "ext-posix": "*"
     },
     "autoload": {
         "psr-4": {

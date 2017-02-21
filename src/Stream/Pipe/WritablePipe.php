@@ -20,11 +20,6 @@ final class WritablePipe implements WritableStream
     private $writable = true;
 
     /**
-     * @var Promise
-     */
-    private $promise;
-
-    /**
      * @param resource $loop
      * @param resource $resource
      */
@@ -46,32 +41,21 @@ final class WritablePipe implements WritableStream
     public function write(string $data): Awaitable
     {
         $handler = $this->handler;
+        $length = strlen($data);
 
-        $write = static function () use ($handler, $data) {
-            $promise = new Promise();
-            $length = strlen($data);
+        $promise = new Promise();
+        uv_write($handler, $data, static function ($handler, int $status) use ($length, $promise) {
+            if ($status < 0) {
+                $this->close();
+                $promise->reject(new \Exception('uv_write status ' . $status));
 
-            uv_write($handler, $data, static function ($handler, int $status) use ($length, $promise) {
-                if ($status < 0) {
-                    $this->close();
-                    $promise->reject(new \Exception('uv_write status ' . $status));
+                return;
+            }
 
-                    return;
-                }
+            $promise->resolve($length);
+        });
 
-                $promise->resolve($length);
-            });
-
-            return $promise;
-        };
-
-        if ($this->promise === null) {
-            $this->promise = $write($data);
-        } else {
-            $this->promise = $this->promise->then($write);
-        }
-
-        return $this->promise;
+        return $promise;
     }
 
     public function end(string $data = ''): Awaitable

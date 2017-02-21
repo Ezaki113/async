@@ -56,3 +56,9 @@ namespace Async {
         loop()->queue($callback);
     }
 }
+
+namespace Async\Stream {
+    function stdout() : WritableStream {
+        return \Async\loop()->stdout();
+    };
+}
