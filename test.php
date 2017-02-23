@@ -9,6 +9,9 @@ $readHandler = uv_pipe_init($loop, false);
 uv_pipe_open($readHandler, (int) $read);
 uv_read_start($readHandler, function ($a, $b, $c) {
     var_dump($a, $b, $c);
+
+    uv_read_stop($a);
+    uv_close($a);
 });
 
 $writeHandler = uv_pipe_init($loop, false);
