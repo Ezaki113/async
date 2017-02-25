@@ -21,6 +21,7 @@ namespace Async {
     use Async\Promise\{
         Awaitable, FulfilledPromise, RejectedPromise
     };
+    use Throwable;
 
     function promise_for($value): Awaitable
     {
@@ -40,6 +41,20 @@ namespace Async {
         return new RejectedPromise($reason);
     }
 
+    /**
+     * @param Throwable|string $reason
+     *
+     * @return Throwable
+     */
+    function exception_for($reason)
+    {
+        if ($reason instanceof Throwable) {
+            return $reason;
+        }
+
+        return new \Exception($reason);
+    }
+
     function loop(): Loop
     {
         static $loop;
@@ -53,12 +68,19 @@ namespace Async {
 
     function queue(callable $callback): void
     {
-        loop()->queue($callback);
+        static $loop;
+
+        if ($loop === null) {
+            $loop = loop();
+        }
+
+        $loop->queue($callback);
     }
 }
 
 namespace Async\Stream {
-    function stdout() : WritableStream {
+    function stdout(): WritableStream
+    {
         return \Async\loop()->stdout();
-    };
+    }
 }

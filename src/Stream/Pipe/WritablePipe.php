@@ -25,7 +25,7 @@ final class WritablePipe implements WritableStream
      */
     public function __construct($loop, $resource)
     {
-        if (!is_resource($resource) || get_resource_type($resource) !== 'stream') {
+        if (!is_resource($resource)) {
             throw new \InvalidArgumentException('Invalid resource');
         }
 

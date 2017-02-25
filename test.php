@@ -1,22 +1,32 @@
 <?php
 
-$sockets = stream_socket_pair(AF_UNIX, SOCK_STREAM, STREAM_IPPROTO_IP);
-list($read, $write) = $sockets;
+use Async\Promise\Awaitable;
+use Async\Promise\Coroutine;
+use Async\Socket\Server\TcpServer;
+use Async\Socket\Socket;
 
-$loop = uv_loop_new();
+require_once __DIR__ . '/vendor/autoload.php';
 
-$readHandler = uv_pipe_init($loop, false);
-uv_pipe_open($readHandler, (int) $read);
-uv_read_start($readHandler, function ($a, $b, $c) {
-    var_dump($a, $b, $c);
+$loop = \Async\loop();
 
-    uv_read_stop($a);
-    uv_close($a);
+$server = new TcpServer($loop->nativeHandler(), static function (TcpServer $server, Socket $socket) {
+    static $count = 0;
+    return (new Coroutine(static function () use ($socket) {
+        static $response = "HTTP/1.1 200 OK\r\nContent-Length: 0\r\nContent-Type: text/html\r\nConnection: close\r\n\r\n";
+
+        yield $socket->end($response);
+
+        $socket->close();
+    }))->then(static function () use (&$count, $server) {
+        $count++;
+        if ($count > 10000) {
+            $server->close();
+        }
+    });
 });
 
-$writeHandler = uv_pipe_init($loop, false);
-uv_pipe_open($writeHandler, (int) $write);
+$server->bind('0.0.0.0', 8080);
+$server->listen();
 
-uv_write($writeHandler, 'hello world');
+$loop->run();
 
-uv_run($loop);

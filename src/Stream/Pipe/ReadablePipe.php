@@ -32,11 +32,13 @@ final class ReadablePipe implements ReadableStream
      */
     public function __construct($loop, $resource)
     {
-        if (!is_resource($resource) || get_resource_type($resource) !== 'stream') {
+        if (!is_resource($resource)) {
             throw new \InvalidArgumentException('Invalid resource');
         }
 
         $this->handler = uv_pipe_init($loop, false);
+
+        uv_pipe_open($this->handler, (int) $resource);
     }
 
     public function isOpen(): bool

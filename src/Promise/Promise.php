@@ -79,7 +79,6 @@ final class Promise implements Awaitable
         return $this->state === self::STATE_REJECTED;
     }
 
-
     private function settle(int $state, $value): void
     {
         if (!$this->isPending()) {

@@ -7,41 +7,21 @@ use PHPUnit\Framework\TestCase;
 
 class ReadablePipeTest extends TestCase
 {
-    const UNIX_SOCKET_PATHNAME = __DIR__ . '/../../../run/readable-pipe-test.unix';
-    /**
-     * @var resource
-     */
-    private $readNativePipe;
+    const UNIX_SOCKET_PATHNAME = __DIR__ . '/../../../run/readable-pipe-test1.unix';
 
-    /**
-     * @var resource
-     */
-    private $writeNativePipe;
+    static $readable;
+
+    static $writable;
 
     /**
      * @var ReadablePipe
      */
-    private $readablePipe;
+    static $readablePipe;
 
-    public function setUp()
+    static $writablePipe;
+
+    public static function setUpBeforeClass()
     {
-        posix_mkfifo(self::UNIX_SOCKET_PATHNAME, 0644);
-
-        $this->assertTrue(file_exists(self::UNIX_SOCKET_PATHNAME));
-
-        $this->readNativePipe = fopen(self::UNIX_SOCKET_PATHNAME, 'r+');
-        $this->writeNativePipe = fopen(self::UNIX_SOCKET_PATHNAME, 'w');
-
-        $this->readablePipe = new ReadablePipe(\Async\loop()->nativeHandler(), $this->readNativePipe);
-
-    }
-
-    public function tearDown()
-    {
-        fclose($this->readNativePipe);
-        fclose($this->writeNativePipe);
-
-        @unlink(self::UNIX_SOCKET_PATHNAME);
     }
 
     /**
@@ -49,24 +29,30 @@ class ReadablePipeTest extends TestCase
      */
     public function _()
     {
-        $this->write($expectedData = 'hello worlds');
-        $actualData = null;
+        $loop = uv_loop_new();
 
-        $actualData = fread($this->readNativePipe, strlen($expectedData));
+        socket_create_pair(AF_UNIX, SOCK_STREAM, STREAM_IPPROTO_IP, $sockets);
+        list($read, $write) = $sockets;
+        socket_set_nonblock($read);
+        socket_set_nonblock($write);
 
-//        $this->readablePipe->read()->then(static function (string $data) use (&$actualData) {
-//            $actualData = $data;
-//        })->then(function () {
-//            $this->readablePipe->close();
-//        });
-//
-//        \Async\loop()->run();
+        $readHandler = uv_pipe_init($loop, false);
+        $writeHandler = uv_pipe_init($loop, false);
 
-        $this->assertEquals($expectedData, $actualData);
-    }
+        uv_pipe_open($readHandler, (int)$read);
+        uv_pipe_open($writeHandler, (int)$write);
 
-    private function write(string $data)
-    {
-        fwrite($this->writeNativePipe, $data);
+        uv_write($writeHandler, 'hello world', function () {
+            echo 'WRITE OK', PHP_EOL;
+        });
+
+        uv_read_start($readHandler, function ($a, $b, $c) {
+            var_dump($a, $b, $c);
+
+            uv_read_stop($a);
+            uv_close($a);
+        });
+
+        uv_run($loop);
     }
 }

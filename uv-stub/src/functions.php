@@ -139,3 +139,42 @@ function uv_read_start($handler, callable $callback) : void {};
  * @param resource $handler
  */
 function uv_read_stop($handler) : void {};
+
+/**
+ * @param resource $loop
+ */
+function uv_tcp_init($loop) {};
+
+/**
+ * @param resource $tcp handler
+ * @param resource $sockaddr
+ */
+function uv_tcp_bind($tcp, $sockaddr) : void {};
+
+/**
+ * @param string $address
+ * @param int $port
+ * @return resource
+ */
+function uv_ip4_addr(string $address, int $port) {};
+
+/**
+ * @param string $address
+ * @param int $port
+ * @return resource
+ */
+function uv_ip6_addr(string $address, int $port) {};
+
+/**
+ * @param resource $handle
+ * @param int $backlog
+ * @param callable $callback
+ * @return void
+ */
+function uv_listen($handle, int $backlog, callable $callback) : void {};
+
+/**
+ * @param resource $server
+ * @param resource $client
+ */
+function uv_accept($server, $client) {};

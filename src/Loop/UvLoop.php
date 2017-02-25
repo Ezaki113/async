@@ -39,8 +39,8 @@ final class UvLoop implements Loop
     public function __destruct()
     {
         if (is_resource($this->loop)) {
-            // TODO after segfault fix
-            //\uv_loop_delete($this->loop);
+//             TODO after segfault fix
+//            \uv_loop_delete($this->loop);
 
             $this->loop = null;
         }
@@ -102,17 +102,14 @@ final class UvLoop implements Loop
 
     public function queue(callable $callback)
     {
-        $wrappedCallback = static function ($handler) use ($callback) {
-            uv_close($handler);
-            $callback();
-        };
-
-        $handler = uv_async_init(
-            $this->loop,
-            $wrappedCallback
-        );
-
-        uv_async_send($handler);
+        $callback();
+//        uv_async_send(uv_async_init(
+//            $this->loop,
+//            static function ($handler) use ($callback) {
+//                uv_close($handler);
+//                $callback();
+//            }
+//        ));
     }
 
     public function stdout(): WritableStream
