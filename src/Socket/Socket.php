@@ -142,6 +142,14 @@ final class Socket implements DuplexStream
         return $this->send($data);
     }
 
+    /**
+     * @param string $data
+     */
+    public function unshift(string $data)
+    {
+        $this->buffer = $data . $this->buffer;
+    }
+
     private function checkPendingPromises()
     {
         while ($this->queue && $this->buffer) {

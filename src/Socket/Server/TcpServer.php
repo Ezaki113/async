@@ -3,8 +3,6 @@ declare (strict_types = 1);
 
 namespace Async\Socket\Server;
 
-use Async\Promise\Awaitable;
-use Async\Socket\Server\Server;
 use Async\Socket\Socket;
 
 final class TcpServer implements Server
